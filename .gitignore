@@ -1,0 +1,13 @@
+.DS_Store
+.eggs
+__pycache__
+.*.swp
+*.egg-info
+*.pyc
+build
+data
+dist
+venv/
+desktop.ini
+thumbs.db
+
