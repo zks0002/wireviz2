@@ -1,18 +1,39 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from wireviz.DataClasses import Connector, Cable
-from graphviz import Graph
-from wireviz import wv_colors, wv_helper, __version__, APP_NAME, APP_URL
-from wireviz.wv_colors import get_color_hex
-from wireviz.wv_helper import awg_equiv, mm2_equiv, tuplelist2tsv, \
-    nested_html_table, flatten2d, index_if_list, html_line_breaks, \
-    graphviz_line_breaks, remove_line_breaks, open_file_read, open_file_write, \
-    html_colorbar, html_image, html_caption, manufacturer_info_field
 from collections import Counter
 from typing import List
 from pathlib import Path
 import re
+
+from wireviz.DataClasses import (
+    Connector,
+    Cable)
+from graphviz import Graph
+from wireviz import (
+    wv_colors,
+    wv_helper,
+    __version__,
+    APP_NAME,
+    APP_URL)
+from wireviz.wv_colors import get_color_hex
+from wireviz.wv_helper import (
+    awg_equiv,
+    mm2_equiv,
+    m2in,
+    in2m,
+    tuplelist2tsv,
+    nested_html_table,
+    flatten2d,
+    index_if_list,
+    html_line_breaks,
+    graphviz_line_breaks,
+    remove_line_breaks,
+    open_file_read,
+    open_file_write,
+    html_colorbar,
+    html_image,
+    html_caption,
+    manufacturer_info_field)
 
 
 class Harness:
@@ -22,6 +43,7 @@ class Harness:
         self.connectors = {}
         self.cables = {}
         self.additional_bom_items = []
+        self.length_unit = 'in'
 
     def add_connector(self, name: str, *args, **kwargs) -> None:
         self.connectors[name] = Connector(name, *args, **kwargs)
@@ -30,7 +52,10 @@ class Harness:
         self.cables[name] = Cable(name, *args, **kwargs)
 
     def add_bom_item(self, item: dict) -> None:
-        self.additional_bom_items.append(item)
+        if 'length_unit' in item:
+            self.length_unit = item['length_unit']
+        else:
+            self.additional_bom_items.append(item)
 
     def connect(self, from_name: str, from_pin: (int, str), via_name: str, via_pin: (int, str), to_name: str, to_pin: (int, str)) -> None:
         for (name, pin) in zip([from_name, to_name], [from_pin, to_pin]):  # check from and to connectors
@@ -150,6 +175,7 @@ class Harness:
             html = []
 
             awg_fmt = ''
+            length_fmt = ''
             if cable.show_equiv:
                 # Only convert units we actually know about, i.e. currently
                 # mm2 and awg --- other units _are_ technically allowed,
@@ -158,6 +184,13 @@ class Harness:
                     awg_fmt = f' ({awg_equiv(cable.gauge)} AWG)'
                 elif cable.gauge_unit.upper() == 'AWG':
                     awg_fmt = f' ({mm2_equiv(cable.gauge)} mm\u00B2)'
+
+                if cable.length_unit == 'in':
+                    length_fmt = f' ({in2m(cable.length):.3f} m)'
+                elif cable.length_unit == 'm':
+                    length_fmt = f' ({m2in(cable.length):.3f} in)'
+                else:
+                    raise Exception(f'Only m or in length units are supported, not {cable.length_unit}')
 
             rows = [[cable.name if cable.show_name else None],
                     [f'P/N: {cable.pn}' if (cable.pn and not isinstance(cable.pn, list)) else None,
@@ -168,7 +201,7 @@ class Harness:
                      f'{cable.wirecount}x' if cable.show_wirecount else None,
                      f'{cable.gauge} {cable.gauge_unit}{awg_fmt}' if cable.gauge else None,
                      '+ S' if cable.shield else None,
-                     f'{cable.length} m' if cable.length > 0 else None,
+                     f'{cable.length} {cable.length_unit}{length_fmt}' if cable.length > 0 else None,
                      cable.color, html_colorbar(cable.color)],
                     '<!-- wire table -->',
                     [html_image(cable.image)],
@@ -360,12 +393,13 @@ class Harness:
             shared = next(iter(items.values()))
             designators = list(items.keys())
             designators.sort()
-            total_length = sum(i.length for i in items.values())
+            lnorm = m2in if self.length_unit == 'in' else in2m
+            total_length = sum(lnorm(i.length) if i.length_unit != self.length_unit else i.length for i in items.values())
             cable_type = f', {remove_line_breaks(shared.type)}' if shared.type else ''
             gauge_name = f' x {shared.gauge} {shared.gauge_unit}' if shared.gauge else ' wires'
             shield_name = ' shielded' if shared.shield else ''
             name = f'Cable{cable_type}, {shared.wirecount}{gauge_name}{shield_name}'
-            item = {'item': name, 'qty': round(total_length, 3), 'unit': 'm', 'designators': designators,
+            item = {'item': name, 'qty': round(total_length, 3), 'unit': self.length_unit, 'designators': designators,
                     'manufacturer': remove_line_breaks(shared.manufacturer), 'mpn': remove_line_breaks(shared.mpn), 'pn': shared.pn}
             bom_cables.append(item)
         # bundles (ignores wirecount)
@@ -375,7 +409,7 @@ class Harness:
             if bundle.category == 'bundle':
                 # add each wire from each bundle to the wirelist
                 for index, color in enumerate(bundle.colors, 0):
-                    wirelist.append({'type': bundle.type, 'gauge': bundle.gauge, 'gauge_unit': bundle.gauge_unit, 'length': bundle.length, 'color': color, 'designator': bundle.name,
+                    wirelist.append({'type': bundle.type, 'gauge': bundle.gauge, 'gauge_unit': bundle.gauge_unit, 'length': bundle.length, 'length_unit': bundle.length_unit, 'color': color, 'designator': bundle.name,
                                      'manufacturer': remove_line_breaks(index_if_list(bundle.manufacturer, index)),
                                      'mpn': remove_line_breaks(index_if_list(bundle.mpn, index)),
                                      'pn': index_if_list(bundle.pn, index)})

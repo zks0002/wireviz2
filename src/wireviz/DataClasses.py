@@ -130,6 +130,7 @@ class Cable:
     gauge_unit: Optional[str] = None
     show_equiv: bool = False
     length: float = 0
+    length_unit: Optional[str] = None
     color: Optional[str] = None
     wirecount: Optional[int] = None
     shield: bool = False
@@ -162,6 +163,21 @@ class Cable:
                 self.gauge_unit = 'mm\u00B2'
         else:
             pass  # gauge not specified
+
+        if isinstance(self.length, str):  # length and unit specified
+            try:
+                l, u = self.length.split(' ')
+            except Exception:
+                raise Exception('Length must be a number, or a number and unit separated by a space')
+            self.length = l
+
+            if u.upper() in ('IN', 'IN.', 'INCHES'):
+                self.length_unit = 'in'
+            else:
+                self.length_unit = 'm'
+        else:
+            assert self.length is not None
+            self.length_unit = 'm'
 
         self.connections = []
 

@@ -23,6 +23,13 @@ awg_equiv_table = {
     '50': '1',
 }
 
+
+def m2in(meters):
+    return meters * 39.3701
+
+def in2m(inches):
+    return inches / 39.3701
+
 mm2_equiv_table = {v:k for k,v in awg_equiv_table.items()}
 
 def awg_equiv(mm2):
