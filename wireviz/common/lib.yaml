@@ -1,0 +1,369 @@
+###############################################################################
+# wireviz Common Part Library.
+#
+# Connectors are organized and named per their RRC#.
+#
+# Dashes have been removed from Molex part numbers for consistency.
+###############################################################################
+
+connectors:
+  #############################################################################
+  # JST Connectors
+  #############################################################################
+  31-00905-02: &31-00905-02
+    subtype: Receptacle
+    pn: 31-00905-02
+    manufacturer: JST Sales America
+    mpn: SHR-02V-S-B
+    pincount: 2
+    image:
+      src: images/SHR-02V-S-B.png
+      height: 80
+  31-00905-03: &31-00905-03
+    subtype: Receptacle
+    pn: 31-00905-03
+    manufacturer: JST Sales America
+    mpn: SHR-03V-S-B
+    pincount: 3
+    image:
+      src: images/SHR-03V-S-B.png
+      height: 80
+  31-00905-04: &31-00905-04
+    subtype: Receptacle
+    pn: 31-00905-04
+    manufacturer: JST Sales America
+    mpn: SHR-04V-S-B
+    pincount: 4
+    image:
+      src: images/SHR-04V-S-B.png
+      height: 80
+  31-00905-05: &31-00905-05
+    subtype: Receptacle
+    pn: 31-00905-05
+    manufacturer: JST Sales America
+    mpn: SHR-05V-S-B
+    pincount: 5
+    image:
+      src: images/SHR-05V-S-B.png
+      height: 80
+  31-00905-06: &31-00905-06
+    subtype: Receptacle
+    pn: 31-00905-06
+    manufacturer: JST Sales America
+    mpn: SHR-06V-S-B
+    pincount: 6
+    image:
+      src: images/SHR-06V-S-B.png
+      height: 80
+  31-00905-08: &31-00905-08
+    subtype: Receptacle
+    pn: 31-00905-08
+    manufacturer: JST Sales America
+    mpn: SHR-08V-S-B
+    pincount: 8
+    image:
+      src: images/SHR-08V-S-B.png
+      height: 80
+  31-00905-10: &31-00905-10
+    subtype: Receptacle
+    pn: 31-00905-10
+    manufacturer: JST Sales America
+    mpn: SHR-10V-S-B
+    pincount: 10
+    image:
+      src: images/SHR-10V-S-B.png
+      height: 80
+  31-00905-12: &31-00905-12
+    subtype: Receptacle
+    pn: 31-00905-12
+    mpn: SHR-12V-S-B
+    manufacturer: JST Sales America
+    pincount: 12
+    image:
+      src: images/SHR-12V-S-B.png
+      height: 80
+  31-00905-14: &31-00905-14
+    subtype: Receptacle
+    pn: 31-00905-14
+    mpn: SHR-14V-S-B
+    manufacturer: JST Sales America
+    pincount: 14
+    image:
+      src: images/SHR-14V-S-B.png
+      height: 80
+  31-00905-20D: &31-00905-20D
+    subtype: Receptacle
+    pn: 31-00905-20D
+    mpn: SHDR-20V-S-B
+    manufacturer: JST Sales America
+    pincount: 20
+    image:
+      src: images/SHDR-20V-S-B.png
+      height: 80
+  #############################################################################
+  # MilliGrid
+  #############################################################################
+  31-02550-01: &31-02550-01
+    type: MilliGrid
+    subtype: Receptacle
+    pn: 31-02550-01
+    manufacturer: Molex
+    mpn: "1511000004"
+    pincount: 4
+    image:
+      src: images/1511000004.png
+      height: 80
+  31-02549-01: &31-02549-01
+    type: MilliGrid
+    subtype: Header
+    pn: 31-02549-01
+    manufacturer: Molex
+    mpn: "1510980004"
+    pincount: 4
+    image:
+      src: images/1510980004.png
+      height: 80
+  31-02546-01: &31-02546-01
+    type: MilliGrid
+    subtype: Receptacle
+    pn: 31-02546-01
+    manufacturer: Molex
+    mpn: "1511000002"
+    pincount: 2
+    image:
+      src: images/1511000002.png
+      height: 80
+  31-02545-01: &31-02545-01
+    type: MilliGrid
+    subtype: Header
+    pn: 31-02545-01
+    manufacturer: Molex
+    mpn: "1510980002"
+    pincount: 2
+    image:
+      src: images/1510980002.png
+      height: 80
+  #############################################################################
+  # MiniFit
+  #############################################################################
+  31-01862-06: &31-01862-06
+    type: MiniFit Jr
+    subtype: Receptacle
+    pn: 31-01862-06
+    manufacturer: Molex
+    mpn: "0039012060"
+    pincount: 6
+    image:
+      src: images/0039012060.png
+      height: 80
+  31-01939-01: &31-01939-01
+    type: MiniFit Jr
+    subtype: Plug
+    pn: 31-01939-01
+    manufacturer: Molex
+    mpn: "0039013023"
+    pincount: 2
+    image:
+      src: images/0039013023.png
+      height: 80
+  1260-302-0010: &1260-302-0010
+    type: MiniFit Jr
+    subtype: Receptacle
+    pn: 1260-302-0010
+    manufacturer: Molex
+    mpn: "0039012020"
+    pincount: 2
+    image:
+      src: images/0039012020.png
+      height: 80
+  #############################################################################
+  # MicroFit
+  #############################################################################
+  31-00734-02: &31-00734-02
+    type: MicroFit
+    subtype: Receptacle
+    pn: 31-00734-02
+    manufacturer: Molex
+    mpn: "0436450200"
+    pincount: 2
+    image:
+      src: images/0436450200.png
+      height: 80
+  1260-302-0008: &1260-302-0008
+    type: MicroFit
+    subtype: Plug
+    pn: 1260-302-0008
+    manufacturer: Molex
+    mpn: "0436400201"
+    pincount: 2
+    image:
+      src: images/0436400201.png
+      height: 80
+  31-00099-02: &31-00099-02
+    type: MicroFit
+    subtype: Receptacle
+    pn: 31-00099-02
+    manufacturer: Molex
+    mpn: "0430250200"
+    pincount: 2
+    image:
+      src: images/0430250200.png
+      height: 80
+  31-00734-03: &31-00734-03
+    type: MicroFit
+    subtype: Receptacle
+    pn: 31-00734-03
+    manufacturer: Molex
+    mpn: "0436450300"
+    pincount: 3
+    image:
+      src: images/0436450300.png
+      height: 80
+  1260-304-0004: &1260-304-0004
+    type: MicroFit
+    subtype: Plug
+    pn: 1260-304-0004
+    manufacturer: Molex
+    mpn: "0430200401"
+    pincount: 4
+    image:
+      src: images/0430200401.png
+      height: 80
+  31-00099-04: &31-00099-04
+    type: MicroFit
+    subtype: Receptacle
+    pn: 31-00099-04
+    manufacturer: Molex
+    mpn: "0430250400"
+    pincount: 4
+    image:
+      src: images/0430250400.png
+      height: 80
+  #############################################################################
+  # NanoFit
+  #############################################################################
+  31-01814-01: &31-01814-01
+    type: NanoFit
+    subtype: Receptacle
+    pn: 31-01814-01
+    manufacturer: Molex
+    mpn: "1053071202"
+    pincount: 2
+    image:
+      src: images/1053071202.png
+      height: 80
+  #############################################################################
+  # Misc
+  #############################################################################
+  31-02267-02: &31-02267-02
+    type: SPOX
+    subtype: Receptacle
+    pn: 31-02267-02
+    manufacturer: Molex
+    mpn: "0009501031"
+    pincount: 3
+    image:
+      src: images/0009501031.png
+      height: 80
+  1260-303-0003: &1260-303-0003
+    type: KK254
+    subtype: Receptacle
+    pn: 1260-303-0003
+    manufacturer: Molex
+    mpn: "0022013037"
+    pincount: 3
+    image:
+      src: images/0022013037.png
+      height: 80
+  31-00097-08: &31-00097-08
+    type: RJ45
+    pn: 31-00097-08
+    manufacturer: Video Products Inc.
+    mpn: CAT5E-SF-RJ45
+    pincount: 8
+    image:
+      src: images/CAT5E-SF-RJ45.png
+      height: 80
+  31-01822-10D: &31-01822-10D
+    type: Tiger Eye
+    subtype: Receptacle
+    pn: 31-01822-10D
+    manufacturer: Samtec
+    mpn: ISDF-10-D
+    pincount: 20
+    image:
+      src: images/ISDF-10-D.png
+      height: 80
+  31-01051-16: &31-01051-16
+    subtype: Receptacle
+    pn: 31-01051-16
+    manufacturer: Hirose Electric Co. Ltd.
+    mpn: DF11-16DS-2C
+    pincount: 16
+    image:
+      src: images/DF11-16DS-2C.png
+      height: 80
+  05-WR-USB-Y11: &05-WR-USB-Y11-connector
+    type: USB
+    pn: 05-WR-USB-Y11
+    manufacturer: Crystalfontz America Inc.
+    mpn: WR-USB-Y11
+    pincount: 1
+    image:
+      src: images/WR-USB-Y11.png
+      height: 80
+  02309: &02309
+    type: BufferBoy
+    pn: 04-02309-01
+    manufacturer: Rincon Research Corporation
+    pinlabels:
+      - A1    # 1
+      - A2    # 2
+      - A3    # 3
+      - A4    # 4
+      - DIR1  # 5
+      - DIR2  # 6
+      - DIR3  # 7
+      - DIR4  # 8
+      - VCC_A # 9
+      - GND_A # 10
+      - VCC_B # 11
+      - GND_B # 12
+      - B1    # 13
+      - B2    # 14
+      - B3    # 15
+      - B4    # 16
+    image:
+      src: images/02309_cfg0.png
+      width: 250
+  02309: &02309_cfg1
+    <<: *02309
+    image:
+      src: images/02309_cfg1.png
+      width: 250
+  TBD: &TBD
+    subtype: Unknown
+    pn: Unknown
+    manufacturer: Unknown
+    mpn: Unknown
+    image:
+      src: images/unknown.png
+      height: 80
+
+cables:
+  1200-022-RD-BK: &1200-022-RD-BK
+    type: Twisted Pair
+    gauge: 22 AWG
+    pn: 1200-022-RD/BK
+    manufacturer: DDH Enterprise, Inc.
+    mpn: 1200-022-RD/BK
+    colors: [RD, BK]
+  05-WR-USB-Y11: &05-WR-USB-Y11-cable
+    type: USB
+    pn: 05-WR-USB-Y11
+    manufacturer: Crystalfontz America Inc.
+    mpn: WR-USB-Y11
+    colors: [RD,WH,GN,BK]
+    image:
+      src: images/WR-USB-Y11-cable.png
+      height: 80

@@ -41,7 +41,7 @@ class Harness:
         self.connectors = {}
         self.cables = {}
         self.additional_bom_items = []
-        self.length_unit = 'in'
+        self.length_unit = 'm'
 
     def add_connector(self, name: str, *args, **kwargs) -> None:
         self.connectors[name] = Connector(name, *args, **kwargs)

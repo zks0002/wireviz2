@@ -1,2 +1,1 @@
-**/*.png linguist-generated
-**/*.svg linguist-generated
+*.png filter=lfs diff=lfs merge=lfs -text

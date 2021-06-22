@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from pathlib import Path
 
-from wireviz import wv_colors
+from . import wv_colors
 
 awg_equiv_table = {
     '0.09': '28',
@@ -232,3 +233,14 @@ def manufacturer_info_field(manufacturer, mpn):
         return f'{manufacturer or "MPN"}{": " + str(mpn) if mpn else ""}'
     else:
         return None
+
+
+def convert_to_pathlib(path):
+    if isinstance(path, Path):
+        return path
+    elif isinstance(path, bytes):
+        return Path(path.decode())
+    elif isinstance(path, str):
+        return Path(path)
+    else:
+        raise TypeError(f"Unexpected path type {type(path)}")

@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import argparse
 import os
 from pathlib import Path
-import sys
-from typing import Any, Tuple
+from typing import Any, Optional, Tuple
+import re
 
 import yaml
+import click
 
-if __name__ == '__main__':
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+from . import __version__
+from .Harness import Harness
+from .wv_helper import expand, open_file_read, convert_to_pathlib
 
-from wireviz import __version__
-from wireviz.Harness import Harness
-from wireviz.wv_helper import expand, open_file_read
+COMMON_LIB = (Path(__file__).parent / 'common' / 'lib.yaml').resolve()
 
 
 def parse(yaml_input: str,
@@ -232,61 +231,108 @@ def parse_file(yaml_file: str, file_out: (str, Path) = None) -> None:
     parse(yaml_input, file_out=file_out)
 
 
-def parse_cmdline():
-    parser = argparse.ArgumentParser(description='''Generate cable and wiring
-        harness documentation from YAML descriptions''', prog='wireviz')
-    parser.add_argument('-V', '--version',
-                        action='version',
-                        version='%(prog)s ' + __version__)
-    parser.add_argument('input_file',
-                        action='store',
-                        type=str,
-                        metavar='YAML_FILE')
-    parser.add_argument('-o', '--output_file',
-                        action='store',
-                        type=str,
-                        metavar='OUTPUT')
-    # Not implemented: parser.add_argument('--generate-bom',
-    #                     action='store_true',
-    #                     default=True)
-    parser.add_argument('--prepend-file',
-                        action='store',
-                        type=str,
-                        metavar='YAML_FILE')
-    return parser.parse_args()
+@click.command(context_settings={'help_option_names': ['-h', '--help']})
+@click.version_option(__version__, prog_name="wireviz")
+@click.argument('srcfile',
+                type=click.Path(exists=True,
+                                file_okay=True,
+                                dir_okay=False,
+                                writable=False,
+                                readable=True,
+                                resolve_path=True,
+                                allow_dash=False))
+@click.option('--prepend-common-lib', '--common', '-c',
+              is_flag=True,
+              default=False,
+              help=("includes the rrc-wireviz common library located in "
+                    f"{COMMON_LIB!s}"))
+@click.option('--outfile', '-o',
+              type=click.Path(exists=False,
+                              file_okay=True,
+                              dir_okay=False,
+                              writable=True,
+                              readable=False,
+                              resolve_path=True,
+                              allow_dash=True),
+              help=("output file, extension is ignored; "
+                    "defaults to input filename"))
+@click.option('--prepend-file', '--prepend', '-i',  # i for include
+              type=click.Path(exists=True,
+                              file_okay=True,
+                              dir_okay=False,
+                              writable=False,
+                              readable=True,
+                              resolve_path=True,
+                              allow_dash=False),
+              help="file(s) to prepend/include to the srcfile",
+              multiple=True)
+def main(srcfile: Optional[Path],
+         prepend_common_lib: bool,
+         outfile: Optional[Path] = None,
+         prepend_file: Optional[Tuple[Path, ...]] = None) -> None:
+    '''Generate cable and wiring harness documentation from YAML descriptions.
+
+    Documentation can be found on the ISBU Hardware Wiki:
+    http://isbuhome/isbuwiki/index.php/Wireviz
+    '''
+    srcfile = convert_to_pathlib(srcfile)
+
+    if outfile:
+        outfile = convert_to_pathlib(outfile)
+    if prepend_file:
+        prepended_file = ()
+        for i, file in enumerate(prepend_file):
+            prepended_file += (convert_to_pathlib(file),)
+        prepend_file = prepended_file
+
+    wireviz(srcfile, prepend_common_lib, outfile, prepend_file)
 
 
-def main():
+def wireviz(srcfile: Path,
+            use_common_lib: bool,
+            outfile: Path = None,
+            prepend_file: Tuple[Path, ...] = None) -> None:
+    """Main function used to invoke the wireviz application.
 
-    args = parse_cmdline()
+    This can be used programatically, but is also called through the CLI.
 
-    if not os.path.exists(args.input_file):
-        print(f'Error: input file {args.input_file} inaccessible '
-              'or does not exist, check path')
-        sys.exit(1)
+    Args:
+        srcfile: the .yaml file to parse
+        use_common_lib: when True, uses the build-in common library
+        outfile: base name of the output file artifacts; defaults to the srcfile
+            basename
+        prepend_file: list of files to prepend to srcfile
+    """
+    with open_file_read(srcfile) as src:
+        yaml_input = src.read()
 
-    with open_file_read(args.input_file) as fh:
-        yaml_input = fh.read()
+    # Prepend the common library
+    prepend = ''
+    if use_common_lib:
+        with open(COMMON_LIB) as src:
+            file = src.read()
+        # Make all the file paths absolute
+        for filepath in re.finditer(r'^\s+src: (.+)$', file, re.MULTILINE):
+            path = (COMMON_LIB.parent / filepath.group(1)).resolve()
+            file = file.replace(filepath.group(1), str(path))
+        prepend += file
 
-    if args.prepend_file:
-        if not os.path.exists(args.prepend_file):
-            print(f'Error: prepend input file {args.prepend_file} '
-                  'inaccessible or does not exist, check path')
-            sys.exit(1)
-        with open_file_read(args.prepend_file) as fh:
-            prepend = fh.read()
-            yaml_input = prepend + yaml_input
+    # Prepend other files
+    for filename in (prepend_file or []):
+        with open(filename) as src:
+            file = src.read()
+        # Make all the file paths absolute
+        for filepath in re.finditer(r'^\s+src: (.+)$', file, re.MULTILINE):
+            path = (filename.parent / filepath.group(1)).resolve()
+            file = file.replace(filepath.group(1), str(path))
+        prepend += file
 
-    if not args.output_file:
-        file_out = args.input_file
-        pre, _ = os.path.splitext(file_out)
-        file_out = pre  # extension will be added by graphviz output function
+    yaml_input = prepend + yaml_input
+
+    if outfile:
+        outfile.parent.mkdir(parents=True, exist_ok=True)
+        file_out = f"{outfile.parents[0] / outfile.stem!s}"
     else:
-        file_out = args.output_file
-    file_out = os.path.abspath(file_out)
+        file_out = f"{srcfile.parents[0] / srcfile.stem!s}"
 
     parse(yaml_input, file_out=file_out)
-
-
-if __name__ == '__main__':
-    main()
