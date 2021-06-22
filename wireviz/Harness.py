@@ -423,6 +423,7 @@ class Harness:
                view: bool = False,
                cleanup: bool = True,
                fmt: tuple = ('pdf', )) -> None:
+        title = Path(filename).stem
         # graphical output
         graph = self.create_graph()
         for f in fmt:
@@ -440,10 +441,10 @@ class Harness:
             file.write(' <meta charset="UTF-8">\n')
             file.write(f' <meta name="generator" '
                        f'content="{APP_NAME} {__version__} - {APP_URL}">\n')
-            file.write(f' <title>{APP_NAME} Diagram and BOM</title>\n')
+            file.write(f' <title>{title} Diagram & BOM</title>\n')
             file.write('</head><body style="font-family:Arial">\n')
 
-            file.write('<h1>Diagram</h1>')
+            file.write(f'<h1>{title} Harness Diagram & BOM</h1>')
             with open_file_read(f'{filename}.svg') as svg:
                 file.write(re.sub(
                     '^<[?]xml [^?>]*[?]>[^<]*<!DOCTYPE [^>]*>',
