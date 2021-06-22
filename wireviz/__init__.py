@@ -1,4 +1,4 @@
-__version__ = '1.0.1'
+__version__ = '1.1.0'
 
 CMD_NAME = 'wireviz'  # Lower case command and module name
 APP_NAME = 'wireviz'  # Application name in texts meant to be human readable
