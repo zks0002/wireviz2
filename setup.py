@@ -49,7 +49,7 @@ def get_dependencies(filename: str) -> List[str]:
 
 if __name__ == "__main__":
     setuptools.setup(
-        name="wireviz",
+        name="rrc-wireviz",
         version=get_version(),
         url="https://gitlab.rinconres.com/isbu/hardware/scripts/wireviz",
         download_url="https://gitlab.rinconres.com/isbu/hardware/scripts/wireviz",  # noqa
