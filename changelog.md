@@ -14,6 +14,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to 
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.2.0 - 2021-06-22
+
+### Changed
+
+* HTML page title now reflects the outfile basename
+* Header on the HTML page now reflects the outfile basename
+
+### Fixed
+
+* `show_equiv: true` will not throw an exception if no wire gauge is given
+
 ## 1.1.0 - 2021-06-22
 
 ### Added
