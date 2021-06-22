@@ -1,47 +1,86 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
+import setuptools
+import pathlib
+import re
+from typing import List
 
-import os
-from setuptools import setup, find_packages
+ROOT = pathlib.Path(__file__).parent
+REPO = ROOT / "wireviz"
 
-from src.wireviz import __version__, CMD_NAME, APP_URL
 
-# Utility function to read the README file.
-# Used for the long_description.  It's nice, because now 1) we have a top level
-# README file and 2) it's easier to type in the README file than to put a raw
-# string in below ...
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+def get_version() -> str:
+    """Retrieve the version from wireviz/__init__.py.
+    The version is stored in one place in this repository, and since the
+    version can't be retrieved by the wireviz module during installation
+    (e.g., pip install rrc-wireviz), it will hold the master copy.
+    """
+    # https://www.python.org/dev/peps/pep-0440/#version-scheme
+    # https://regex101.com/r/Ly7O1x/319
+    # See readme.md for the Versioning Public API
+    regex = (r"""__version__\s*=\s*['"]{1,3}"""
+             r"(?P<release>(?:0|[1-9])\d*(?:\.(?:0|[1-9]\d*)){2})"
+             r"(?:-(?P<pre>(?P<prel>a|b|rc)(?P<pren>(?:0|[1-9])\d*)))?"
+             r"(?:\+(?P<local>[a-z\d]+(?:[-_\.][a-z\d]+)*))?"
+             r"""['"]{1,3}""")
 
-setup(
-    name=CMD_NAME,
-    version=__version__,
-    author='Daniel Rojas',
-    #author_email='',
-    description='Easily document cables and wiring harnesses',
-    long_description=read(os.path.join(os.path.dirname(__file__), 'docs/README.md')),
-    long_description_content_type='text/markdown',
-    install_requires=[
-        'pyyaml',
-        'pillow',
-        'graphviz',
-        ],
-    license='GPLv3',
-    keywords='cable connector hardware harness wiring wiring-diagram wiring-harness',
-    url=APP_URL,
-    package_dir={'': 'src'},
-    packages=find_packages('src'),
-    entry_points={
-        'console_scripts': ['wireviz=wireviz.wireviz:main'],
+    with open(REPO / '__init__.py') as f:
+        vsrc = re.search(regex, f.read())
+
+    if not vsrc:
+        raise ValueError(f"Invalid __version__ in '{f.name}'.")
+
+    version = vsrc.group('release')
+    if vsrc.group('pre'):
+        version += f"-{vsrc.group('pre')}"
+    if vsrc.group('local'):
+        version += f"+{vsrc.group('local')}"
+    return version
+
+
+def get_dependencies(filename: str) -> List[str]:
+    """Get a list of dependencies fit for the install_requires option."""
+    with open(ROOT / filename, 'r') as f:
+        ret = [re.sub(r"\s", "", req) for req in f.readlines()
+               # Remove blank lines, comments, and options beginning with a dash
+               if req.strip() and not (req.startswith('#') or
+                                       req.startswith('-'))]
+    return ret
+
+
+if __name__ == "__main__":
+    setuptools.setup(
+        name="newpcb",
+        version=get_version(),
+        url="https://gitlab.rinconres.com/isbu/hardware/scripts/wireviz",
+        download_url="https://gitlab.rinconres.com/isbu/hardware/scripts/wireviz",  # noqa
+        project_urls={
+            "Bug Tracker": "https://gitlab.rinconres.com/isbu/hardware/scripts/wireviz/-/issues",  # noqa
+            "Documentation": "https://gitlab.rinconres.com/isbu/hardware/scripts/wireviz/-/blob/master/readme.md",  # noqa
+            "Source Code": "https://gitlab.rinconres.com/isbu/hardware/scripts/wireviz",  # noqa
         },
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Environment :: Console',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Topic :: Utilities',
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        author="Daniel Rojas",
+        maintainer="Zack Sheffield",
+        maintainer_email="zks@rincon.com",
+        classifiers=[
+            "Development Status :: 4 - Beta",
+            "Environment :: Console",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.7",
+            "Programming Language :: Python :: 3.8",
+            "Topic :: Utilities",
+            "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         ],
-
-)
+        license="GPLv3",
+        description="Easily document cables and wiring harnesses",
+        long_description=open(ROOT / "readme.md").read(),
+        long_description_content_type="text/markdown",
+        keywords=('cable connector hardware harness wiring '
+                  'wiring-diagram wiring-harness'),
+        install_requires=get_dependencies("install_requires.txt"),
+        packages=["wireviz"],
+        entry_points={
+            "console_scripts": ["wireviz=wireviz.wireviz:main"],
+        },
+        python_requires=">=3.7",
+        setup_requires=get_dependencies("setup_requires.txt"),
+    )
