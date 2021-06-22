@@ -205,10 +205,15 @@ class Harness:
                 # Only convert units we actually know about, i.e. currently
                 # mm2 and awg --- other units _are_ technically allowed,
                 # and passed through as-is.
-                if cable.gauge_unit == 'mm\u00B2':
-                    awg_fmt = f' ({awg_equiv(cable.gauge)} AWG)'
-                elif cable.gauge_unit.upper() == 'AWG':
-                    awg_fmt = f' ({mm2_equiv(cable.gauge)} mm\u00B2)'
+                try:
+                    if cable.gauge_unit == 'mm\u00B2':
+                        awg_fmt = f' ({awg_equiv(cable.gauge)} AWG)'
+                    elif cable.gauge_unit.upper() == 'AWG':
+                        awg_fmt = f' ({mm2_equiv(cable.gauge)} mm\u00B2)'
+                except AttributeError:
+                    # show_equiv works for both wire gauge and length. Ignore
+                    # the case when AWG isn't specified
+                    pass
 
                 if cable.length_unit == 'in':
                     length_fmt = f' ({in2m(cable.length):.3f} m)'
@@ -423,6 +428,7 @@ class Harness:
                view: bool = False,
                cleanup: bool = True,
                fmt: tuple = ('pdf', )) -> None:
+        title = Path(filename).stem
         # graphical output
         graph = self.create_graph()
         for f in fmt:
@@ -440,10 +446,10 @@ class Harness:
             file.write(' <meta charset="UTF-8">\n')
             file.write(f' <meta name="generator" '
                        f'content="{APP_NAME} {__version__} - {APP_URL}">\n')
-            file.write(f' <title>{APP_NAME} Diagram and BOM</title>\n')
+            file.write(f' <title>{title} Diagram & BOM</title>\n')
             file.write('</head><body style="font-family:Arial">\n')
 
-            file.write('<h1>Diagram</h1>')
+            file.write(f'<h1>{title} Harness Diagram & BOM</h1>')
             with open_file_read(f'{filename}.svg') as svg:
                 file.write(re.sub(
                     '^<[?]xml [^?>]*[?]>[^<]*<!DOCTYPE [^>]*>',
