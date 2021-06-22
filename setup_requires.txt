@@ -1,0 +1,4 @@
+nose ~= 1.3.7
+wheel ~= 0.30.0
+
+-r install_requires.txt
