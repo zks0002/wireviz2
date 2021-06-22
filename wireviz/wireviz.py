@@ -234,7 +234,7 @@ def parse_file(yaml_file: str, file_out: (str, Path) = None) -> None:
 
 def parse_cmdline():
     parser = argparse.ArgumentParser(description='''Generate cable and wiring
-        harness documentation from YAML descriptions''')
+        harness documentation from YAML descriptions''', prog='wireviz')
     parser.add_argument('-V', '--version',
                         action='version',
                         version='%(prog)s ' + __version__)
