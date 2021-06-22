@@ -205,10 +205,15 @@ class Harness:
                 # Only convert units we actually know about, i.e. currently
                 # mm2 and awg --- other units _are_ technically allowed,
                 # and passed through as-is.
-                if cable.gauge_unit == 'mm\u00B2':
-                    awg_fmt = f' ({awg_equiv(cable.gauge)} AWG)'
-                elif cable.gauge_unit.upper() == 'AWG':
-                    awg_fmt = f' ({mm2_equiv(cable.gauge)} mm\u00B2)'
+                try:
+                    if cable.gauge_unit == 'mm\u00B2':
+                        awg_fmt = f' ({awg_equiv(cable.gauge)} AWG)'
+                    elif cable.gauge_unit.upper() == 'AWG':
+                        awg_fmt = f' ({mm2_equiv(cable.gauge)} mm\u00B2)'
+                except AttributeError:
+                    # show_equiv works for both wire gauge and length. Ignore
+                    # the case when AWG isn't specified
+                    pass
 
                 if cable.length_unit == 'in':
                     length_fmt = f' ({in2m(cable.length):.3f} m)'
