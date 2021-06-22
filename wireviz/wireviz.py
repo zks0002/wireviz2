@@ -11,7 +11,7 @@ import click
 
 from . import __version__
 from .Harness import Harness
-from .wv_helper import expand, open_file_read
+from .wv_helper import expand, open_file_read, convert_to_pathlib
 
 COMMON_LIB = (Path(__file__).parent / 'common' / 'lib.yaml').resolve()
 
@@ -275,17 +275,6 @@ def main(srcfile: Optional[Path],
     Documentation can be found on the ISBU Hardware Wiki:
     http://isbuhome/isbuwiki/index.php/Wireviz
     '''
-    def convert_to_pathlib(path):
-        if isinstance(path, Path):
-            return path
-        elif isinstance(path, bytes):
-            return Path(path.decode())
-        elif isinstance(path, str):
-            return Path(path)
-        else:
-            raise TypeError(f"Unexpected path type {type(path)}")
-
-    # Source file is specified
     srcfile = convert_to_pathlib(srcfile)
 
     if outfile:
@@ -296,12 +285,30 @@ def main(srcfile: Optional[Path],
             prepended_file += (convert_to_pathlib(file),)
         prepend_file = prepended_file
 
+    wireviz(srcfile, prepend_common_lib, outfile, prepend_file)
+
+
+def wireviz(srcfile: Path,
+            use_common_lib: bool,
+            outfile: Path = None,
+            prepend_file: Tuple[Path, ...] = None) -> None:
+    """Main function used to invoke the wireviz application.
+
+    This can be used programatically, but is also called through the CLI.
+
+    Args:
+        srcfile: the .yaml file to parse
+        use_common_lib: when True, uses the build-in common library
+        outfile: base name of the output file artifacts; defaults to the srcfile
+            basename
+        prepend_file: list of files to prepend to srcfile
+    """
     with open_file_read(srcfile) as src:
         yaml_input = src.read()
 
     # Prepend the common library
     prepend = ''
-    if prepend_common_lib:
+    if use_common_lib:
         with open(COMMON_LIB) as src:
             file = src.read()
         # Make all the file paths absolute

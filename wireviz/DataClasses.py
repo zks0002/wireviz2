@@ -184,7 +184,7 @@ class Cable:
             except Exception:
                 raise Exception('Length must be a number, or a number and unit '
                                 'separated by a space')
-            self.length = l
+            self.length = float(l)
 
             if u.upper() in ('IN', 'IN.', 'INCHES'):
                 self.length_unit = 'in'
