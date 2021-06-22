@@ -47,6 +47,15 @@ def get_dependencies(filename: str) -> List[str]:
     return ret
 
 
+def get_package_data() -> List[str]:
+    """Returns a list of non-source-code files to be included with the dist."""
+    ret = []
+    for item in REPO.rglob("common/**/*"):
+        if item.is_file():
+            ret.append(str(item.relative_to(REPO)))
+    return ret
+
+
 if __name__ == "__main__":
     setuptools.setup(
         name="rrc-wireviz",
@@ -78,6 +87,8 @@ if __name__ == "__main__":
                   'wiring-diagram wiring-harness'),
         install_requires=get_dependencies("install_requires.txt"),
         packages=["wireviz"],
+        include_package_data=True,
+        package_data={"wireviz": get_package_data()},
         entry_points={
             "console_scripts": ["wireviz=wireviz.wireviz:main"],
         },
