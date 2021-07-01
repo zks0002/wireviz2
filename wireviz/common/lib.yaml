@@ -253,6 +253,56 @@ connectors:
       src: images/1053071202.png
       height: 80
   #############################################################################
+  # Switches/buttons
+  #############################################################################
+  29-02011-125: &29-02011-125
+    type: Toggle Switch
+    subtype: SPST
+    pn: 29-02011-125
+    manufacturer: NKK Switches
+    mpn: M2011S2S1W01
+    pincount: 3
+    pinlabels:
+      - No Connect
+      - COM
+      - NC
+    image:
+      src: images/M2011S2S1W01.png
+      height: 80
+    29-00584-01: &29-00584-01
+      type: Pushbutton
+      subtype: SPST Off/Mom
+      pn: 29-00584-01
+      manufacturer: Tyco Electronics
+      mpn: 2-1825098-0
+      pincount: 3
+      pinlabels:
+        - "NO"
+        - No Connect
+        - COM
+    image:
+      src: images/2-1825098-0.png
+      height: 80
+
+  #############################################################################
+  # SMPM
+  #############################################################################
+  31-02783: &31-02783
+    type: SMPM-T
+    image:
+      src: images/31-02783.png
+      height: 80
+
+  #############################################################################
+  # SMA
+  #############################################################################
+  31-01210-01: &31-01210-01
+    type: SMA
+    image:
+      src: images/142-0761-801.png
+      height: 80
+
+  #############################################################################
   # Misc
   #############################################################################
   31-02267-02: &31-02267-02
@@ -366,4 +416,13 @@ cables:
     colors: [RD,WH,GN,BK]
     image:
       src: images/WR-USB-Y11-cable.png
+      height: 80
+  05-00440-07: &05-00440-07
+    type: SMA/m to SMA/m
+    pn: 05-00440-07
+    manufacturer: Astrolab
+    mpn: Minibend-7
+    colors: [BU]
+    image:
+      src: images/Minibend.png
       height: 80
