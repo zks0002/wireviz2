@@ -43,8 +43,8 @@ Once the distribution is built, you can deploy.
 
 ### Deployment
 
-The following command uploads the distribution files to GitLab's newpcb PyPi
-package registry:
+The following command uploads the distribution files to GitLab's rrc-wireviz
+PyPi package registry:
 
 `py -m twine upload -r rrc-gitlab-wireviz dist/* --cert "C:\Users\%USERNAME%\ca-bundle.crt"`
 
